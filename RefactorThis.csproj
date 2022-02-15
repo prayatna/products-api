@@ -8,9 +8,20 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.2" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.14" />
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="Newtonsoft.Json" />
+      <None Remove="Domain\" />
+      <None Remove="Domain\Models\" />
+      <None Remove="Domain\Repository\" />
+      <None Remove="Microsoft.EntityFrameworkCore.Sqlite" />
+      <None Remove="Microsoft.EntityFrameworkCore" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Domain\" />
+      <Folder Include="Domain\Models\" />
+      <Folder Include="Domain\Repository\" />
     </ItemGroup>
 </Project>

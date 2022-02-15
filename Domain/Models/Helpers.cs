@@ -1,7 +1,7 @@
 ﻿using System.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 
-namespace RefactorThis.Models
+namespace RefactorThis.Domain.Models
 {
     public class Helpers
     {

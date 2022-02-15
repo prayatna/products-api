@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace RefactorThis.Models
+namespace RefactorThis.Domain.Models
 {
     public class Products
     {

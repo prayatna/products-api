@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Hosting;
+using RefactorThis.Domain;
 
 namespace RefactorThis
 {
@@ -28,6 +29,9 @@ namespace RefactorThis
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            //Configure SQLite DBContext
+            services.AddEntityFrameworkSqlite().AddDbContext<AppDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
