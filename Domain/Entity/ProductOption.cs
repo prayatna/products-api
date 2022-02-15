@@ -1,5 +1,5 @@
 ﻿using System;
-namespace RefactorThis.Domain.Models
+namespace Domain.Entity
 {
     public class ProductOptionx
     {

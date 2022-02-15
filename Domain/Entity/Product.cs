@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RefactorThis.Domain.Models
+namespace Domain.Entity
 {
     public class Productx
     {

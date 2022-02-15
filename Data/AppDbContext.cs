@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RefactorThis.Domain.Models;
+﻿using Domain.Entity;
+using Microsoft.EntityFrameworkCore;
 
-namespace RefactorThis.Domain
+namespace Data
 {
     public class AppDbContext : DbContext
     {

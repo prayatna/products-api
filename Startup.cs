@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Hosting;
 using RefactorThis.Domain;
+using Data;
 
 namespace RefactorThis
 {
@@ -31,7 +32,7 @@ namespace RefactorThis
             services.AddControllers();
 
             //Configure SQLite DBContext
-            services.AddEntityFrameworkSqlite().AddDbContext<AppDbContext>();
+            services.AddInfrastructure();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
