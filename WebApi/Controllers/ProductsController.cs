@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
-using RefactorThis.Domain.Models;
+using WebApi.Models;
 
 namespace RefactorThis.Controllers
 {
