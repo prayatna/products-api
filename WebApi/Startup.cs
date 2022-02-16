@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using WebApi.Services;
 
 namespace WebApi
 {
@@ -28,6 +29,10 @@ namespace WebApi
         {
 
             services.AddControllers();
+
+            //Configure Services
+            services.AddScoped<IProductService, ProductService>();
+
 
             //Configure SQLite DBContext
             services.AddInfrastructure();
