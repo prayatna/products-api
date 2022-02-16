@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Domain.Interfaces;
 using WebApi.Dto;
+using WebApi.Helpers;
 
 namespace WebApi.Services
 {
@@ -18,15 +19,7 @@ namespace WebApi.Services
         {
             var product = await _productRepository.GetByIdAsync(id);
 
-            //TODO: mapper
-            return new ProductDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                DeliveryPrice = product.DeliveryPrice
-            };
+            return product.AsDto();
         }
     }
 }
