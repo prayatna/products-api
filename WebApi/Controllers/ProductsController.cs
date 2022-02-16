@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using RefactorThis.Models;
+using WebApi.Dto;
+using WebApi.Models;
+using WebApi.Services;
 
 namespace RefactorThis.Controllers
 {
@@ -8,6 +11,13 @@ namespace RefactorThis.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
+        private readonly IProductService _productService;
+
+        public ProductsController(IProductService productService)
+        {
+            _productService = productService;
+        }
+
         [HttpGet]
         public Products Get()
         {
@@ -15,13 +25,18 @@ namespace RefactorThis.Controllers
         }
 
         [HttpGet("{id}")]
-        public Product Get(Guid id)
+        public async Task<ActionResult<ProductDto>> Get(Guid id)
         {
-            var product = new Product(id);
-            if (product.IsNew)
-                throw new Exception();
+            //TODO check what isNew is
+            //var product = new Product(id);
+            //if (product.IsNew)
+            //    throw new Exception();
 
-            return product;
+            //return product;
+
+            var product = await _productService.GetProductById(id);
+            // Handle exception?
+            return Ok(product);
         }
 
         [HttpPost]
