@@ -6,6 +6,11 @@ namespace WebApi.Dto
     {
         public List<ProductDto> Items { get; private set; }
 
+        public ProductsDto()
+        {
+            Items = new List<ProductDto>();
+        }
+
         public ProductsDto(List<ProductDto> products)
         {
             Items = products;
