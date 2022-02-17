@@ -19,9 +19,18 @@ namespace RefactorThis.Controllers
         }
 
         [HttpGet]
-        public Products Get()
+        public async Task<ActionResult<ProductsDto>> Get()
         {
-            return new Products();
+            try
+            {
+                var allProducts = await _productService.GetAllProducts();
+                return Ok(allProducts);
+            }
+            catch (Exception ex)
+            {
+                // TODO: log message
+                return Problem(ex.Message);
+            }
         }
 
         [HttpGet("{id}")]

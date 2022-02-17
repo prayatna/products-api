@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Domain.Interfaces;
 using WebApi.Dto;
@@ -8,7 +9,7 @@ namespace WebApi.Services
 {
     public class ProductService: IProductService
     {
-        private IProductRepository _productRepository;
+        private readonly IProductRepository _productRepository;
 
         public ProductService(IProductRepository productRepository)
         {
@@ -20,6 +21,17 @@ namespace WebApi.Services
             var product = await _productRepository.GetByIdAsync(id);
 
             return product.AsDto();
+        }
+
+        public async Task<ProductsDto> GetAllProducts()
+        {
+            var products = (await _productRepository.GetAllAsync())
+                .Select(a => a.AsDto())
+                .ToList();
+
+            var allProducts = new ProductsDto(products);
+
+            return allProducts;    
         }
     }
 }

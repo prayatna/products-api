@@ -7,5 +7,7 @@ namespace WebApi.Services
     public interface IProductService
     {
         Task<ProductDto> GetProductById(Guid id);
+
+        Task<ProductsDto> GetAllProducts();
     }
 }
