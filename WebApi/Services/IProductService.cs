@@ -11,5 +11,7 @@ namespace WebApi.Services
         Task<ProductsDto> GetAllProducts();
 
         Task<ProductDto> AddProduct(AddProductDto product);
+
+        Task UpdateProduct(Guid productId, AddProductDto product);
     }
 }

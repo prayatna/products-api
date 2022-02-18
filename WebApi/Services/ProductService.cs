@@ -37,18 +37,28 @@ namespace WebApi.Services
 
         public async Task<ProductDto> AddProduct(AddProductDto product)
         {
-            var productEntity = new Productx()
-            {
-                Id = Guid.NewGuid(),
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                DeliveryPrice = product.DeliveryPrice
-            };
+
+            var productEntity = new Productx(product.Name, product.Description,
+                product.Price, product.DeliveryPrice);
 
             await _productRepository.AddAsync(productEntity);
 
             return productEntity.AsDto();
+        }
+
+        public async Task UpdateProduct(Guid productId, AddProductDto product)
+        {
+            var existingProduct = await _productRepository.GetByIdAsync(productId);
+
+            if(existingProduct is null)
+            {
+                throw new ApplicationException($"No product found for productId: {productId}");
+            }
+
+            existingProduct.UpdateProduct(product.Name, product.Description,
+                product.Price, product.DeliveryPrice);
+
+            await _productRepository.UpdateAsync();
         }
     }
 }

@@ -119,7 +119,7 @@ namespace WebApi.Tests
             _controller = new ProductsController(_productServiceMock.Object);
 
             // Act
-            var result = await _controller.PostAsync(toAddNewProduct);
+            var result = await _controller.PostProductAsync(toAddNewProduct);
 
             // Assert
             var createdItem = ((CreatedAtActionResult)result.Result).Value as ProductDto;
@@ -127,6 +127,37 @@ namespace WebApi.Tests
             createdItem.Should().BeEquivalentTo(expectedNewProduct);
             createdItem.Id.Should().NotBeEmpty();
         }
+
+        [Fact]
+        public async Task GivenProductIdAndUpdatedProduct_WhenUpdateProductMethodIsCalled_ThenReturnsNoContent()
+        {
+            // Arrange
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.UpdateAsync(Guid.NewGuid(), new AddProductDto());
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task GivenInvalidProductIdAndUpdatedProduct_WhenUpdateProductMethodIsCalled_ThenReturnsBadRequest()
+        {
+            // Arrange
+            var nonExistantProductId = Guid.NewGuid();
+            _productServiceMock.Setup(s => s.UpdateProduct(It.IsAny<Guid>(), It.IsAny<AddProductDto>()))
+                .ThrowsAsync(new ApplicationException($"No product found for productId: {nonExistantProductId}"));
+
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.UpdateAsync(Guid.NewGuid(), new AddProductDto());
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
         #endregion
 
         public ProductDto CreateFakeProduct()

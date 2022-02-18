@@ -18,6 +18,7 @@ namespace WebApi.Controllers
             _productService = productService;
         }
 
+        // GET /products
         [HttpGet]
         public async Task<ActionResult<ProductsDto>> GetProductsAsync()
         {
@@ -33,6 +34,7 @@ namespace WebApi.Controllers
             }
         }
 
+        // GET /products/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDto>> GetProductAsync(Guid id)
         {
@@ -53,8 +55,9 @@ namespace WebApi.Controllers
             return product;
         }
 
+        // POST /products
         [HttpPost]
-        public async Task<ActionResult<ProductDto>> PostAsync(AddProductDto product)
+        public async Task<ActionResult<ProductDto>> PostProductAsync(AddProductDto product)
         {
             try
             {
@@ -70,19 +73,23 @@ namespace WebApi.Controllers
             }
         }
 
+        // PUT /products/{id}
         [HttpPut("{id}")]
-        public void Update(Guid id, Product product)
+        public async Task<ActionResult> UpdateAsync(Guid id, AddProductDto product)
         {
-            var orig = new Product(id)
+            try
             {
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                DeliveryPrice = product.DeliveryPrice
-            };
-
-            if (!orig.IsNew)
-                orig.Save();
+                await _productService.UpdateProduct(id, product);
+                return NoContent();
+            }
+            catch(ApplicationException appEx)
+            {
+                return BadRequest(appEx.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         [HttpDelete("{id}")]
