@@ -2,7 +2,7 @@
 
 namespace WebApi.Dto
 {
-    public class AddProductDto
+    public class AddUpdateProductDto
     {
         [Required]
         public string Name { get; set; }

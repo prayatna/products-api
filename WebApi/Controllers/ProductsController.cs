@@ -57,7 +57,7 @@ namespace WebApi.Controllers
 
         // POST /products
         [HttpPost]
-        public async Task<ActionResult<ProductDto>> PostProductAsync(AddProductDto product)
+        public async Task<ActionResult<ProductDto>> PostProductAsync(AddUpdateProductDto product)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace WebApi.Controllers
 
         // PUT /products/{id}
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateAsync(Guid id, AddProductDto product)
+        public async Task<ActionResult> UpdateAsync(Guid id, AddUpdateProductDto product)
         {
             try
             {
@@ -92,11 +92,23 @@ namespace WebApi.Controllers
             }
         }
 
+        // DELETE /products/{id}
         [HttpDelete("{id}")]
-        public void Delete(Guid id)
+        public async Task<ActionResult> Delete(Guid id)
         {
-            var product = new Product(id);
-            product.Delete();
+            try
+            {
+                await _productService.DeleteProduct(id);
+                return NoContent();
+            }
+            catch(ApplicationException appEx)
+            {
+                return BadRequest(appEx.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         [HttpGet("{productId}/options")]

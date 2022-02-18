@@ -35,7 +35,7 @@ namespace WebApi.Services
             return allProducts;    
         }
 
-        public async Task<ProductDto> AddProduct(AddProductDto product)
+        public async Task<ProductDto> AddProduct(AddUpdateProductDto product)
         {
 
             var productEntity = new Productx(product.Name, product.Description,
@@ -46,7 +46,7 @@ namespace WebApi.Services
             return productEntity.AsDto();
         }
 
-        public async Task UpdateProduct(Guid productId, AddProductDto product)
+        public async Task UpdateProduct(Guid productId, AddUpdateProductDto product)
         {
             var existingProduct = await _productRepository.GetByIdAsync(productId);
 
@@ -59,6 +59,18 @@ namespace WebApi.Services
                 product.Price, product.DeliveryPrice);
 
             await _productRepository.UpdateAsync();
+        }
+
+        public async Task DeleteProduct(Guid productId)
+        {
+            var existingProduct = await _productRepository.GetByIdAsync(productId);
+
+            if(existingProduct is null)
+            {
+                throw new ApplicationException($"No product found for productId: {productId}");
+            }
+
+            await _productRepository.DeleteAsync(existingProduct); // TODO: cascade delete product options
         }
     }
 }

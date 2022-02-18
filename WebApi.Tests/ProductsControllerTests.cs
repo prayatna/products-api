@@ -98,7 +98,7 @@ namespace WebApi.Tests
         public async Task GivenNewProduct_WhenPostMethodIsCalled_ThenReturnsCreatedProduct()
         {
             // Arrange
-            var toAddNewProduct = new AddProductDto
+            var toAddNewProduct = new AddUpdateProductDto
             {
                 Name = "Fake product",
                 Description = "Some random Description",
@@ -113,7 +113,7 @@ namespace WebApi.Tests
                 Price = toAddNewProduct.Price,
                 DeliveryPrice = toAddNewProduct.DeliveryPrice
             };
-            _productServiceMock.Setup(s => s.AddProduct(It.IsAny<AddProductDto>()))
+            _productServiceMock.Setup(s => s.AddProduct(It.IsAny<AddUpdateProductDto>()))
                 .ReturnsAsync(expectedNewProduct);
 
             _controller = new ProductsController(_productServiceMock.Object);
@@ -135,7 +135,7 @@ namespace WebApi.Tests
             _controller = new ProductsController(_productServiceMock.Object);
 
             // Act
-            var result = await _controller.UpdateAsync(Guid.NewGuid(), new AddProductDto());
+            var result = await _controller.UpdateAsync(Guid.NewGuid(), new AddUpdateProductDto());
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -146,13 +146,43 @@ namespace WebApi.Tests
         {
             // Arrange
             var nonExistantProductId = Guid.NewGuid();
-            _productServiceMock.Setup(s => s.UpdateProduct(It.IsAny<Guid>(), It.IsAny<AddProductDto>()))
+            _productServiceMock.Setup(s => s.UpdateProduct(It.IsAny<Guid>(), It.IsAny<AddUpdateProductDto>()))
                 .ThrowsAsync(new ApplicationException($"No product found for productId: {nonExistantProductId}"));
 
             _controller = new ProductsController(_productServiceMock.Object);
 
             // Act
-            var result = await _controller.UpdateAsync(Guid.NewGuid(), new AddProductDto());
+            var result = await _controller.UpdateAsync(Guid.NewGuid(), new AddUpdateProductDto());
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task GivenProductId_WhenDeleteProductMethodIsCalled_ThenReturnsNoContent()
+        {
+            // Arrange
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.Delete(Guid.NewGuid());
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task GivenInvalidProductId_WhenDeleteProductMethodIsCalled_ThenReturnsBadRequest()
+        {
+            // Arrange
+            var nonExistantProductId = Guid.NewGuid();
+            _productServiceMock.Setup(s => s.DeleteProduct(It.IsAny<Guid>()))
+                .ThrowsAsync(new ApplicationException($"No product found for productId: {nonExistantProductId}"));
+
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.Delete(Guid.NewGuid());
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
