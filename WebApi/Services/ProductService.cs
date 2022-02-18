@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.Entity;
 using Domain.Interfaces;
 using WebApi.Dto;
 using WebApi.Helpers;
@@ -32,6 +33,22 @@ namespace WebApi.Services
             var allProducts = new ProductsDto(products);
 
             return allProducts;    
+        }
+
+        public async Task<ProductDto> AddProduct(AddProductDto product)
+        {
+            var productEntity = new Productx()
+            {
+                Id = Guid.NewGuid(),
+                Name = product.Name,
+                Description = product.Description,
+                Price = product.Price,
+                DeliveryPrice = product.DeliveryPrice
+            };
+
+            await _productRepository.AddAsync(productEntity);
+
+            return productEntity.AsDto();
         }
     }
 }

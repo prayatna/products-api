@@ -19,18 +19,16 @@ namespace WebApi.Tests
 
         #region Products
         [Fact]
-        public async Task GivenNoProductId_WhenGetMethodIsCalledAndResultListHasValue_ThenReturnsAllProductList()
+        public async Task GivenGetProducts_WhenMethodIsCalledAndResultListHasValue_ThenReturnsAllProductList()
         {
             // Arrange
-            var fakeProduct1 = CreateFakeProduct();
-            var fakeProduct2 = CreateFakeProduct();
-            var allFakes = new List<ProductDto>
+            var allProductList = new List<ProductDto>
             {
-                fakeProduct1,
-                fakeProduct2
+                CreateFakeProduct(),
+                CreateFakeProduct()
             };
 
-            var allExpectedProducts = new ProductsDto(allFakes);
+            var allExpectedProducts = new ProductsDto(allProductList);
 
             _productServiceMock.Setup(s => s.GetAllProducts())
                 .ReturnsAsync(allExpectedProducts);
@@ -38,14 +36,14 @@ namespace WebApi.Tests
             _controller = new ProductsController(_productServiceMock.Object);
 
             // Act
-            var result = await _controller.Get();
+            var result = await _controller.GetProductsAsync();
 
             // Assert
             result.Value.Should().BeEquivalentTo(allExpectedProducts);
         }
 
         [Fact]
-        public async Task GivenNoProductId_WhenGetMethodIsCalledAndResultListHasNoValue_ThenReturnsEmptyList()
+        public async Task GivenGetProducts_WhenMethodIsCalledAndResultListHasNoValue_ThenReturnsEmptyList()
         {
             // Arrange
             var expectedEmptyProductList = new ProductsDto();
@@ -56,14 +54,14 @@ namespace WebApi.Tests
             _controller = new ProductsController(_productServiceMock.Object);
 
             // Act
-            var result = await _controller.Get();
+            var result = await _controller.GetProductsAsync();
 
             // Assert
             result.Value.Items.Should().BeEmpty();
         }
 
         [Fact]
-        public async Task GivenProductId_WhenGetMethodIsCalledAndResultHasValue_ThenReturnsExpectedProduct()
+        public async Task GivenProductId_WhenGetProductMethodIsCalledAndResultHasValue_ThenReturnsExpectedProduct()
         {
             // Arrange
             var expectedItem = CreateFakeProduct();
@@ -74,14 +72,14 @@ namespace WebApi.Tests
             _controller = new ProductsController(_productServiceMock.Object);
 
             // Act
-            var result = await _controller.Get(Guid.NewGuid());
+            var result = await _controller.GetProductAsync(Guid.NewGuid());
 
             // Assert
             result.Value.Should().BeEquivalentTo(expectedItem);
         }
 
         [Fact]
-        public async Task GivenProductId_WhenGetMethodIsCalledAndResultIsEmpty_ThenReturnsNoContent()
+        public async Task GivenProductId_WhenGetProductMethodIsCalledAndResultIsEmpty_ThenReturnsNoContent()
         {
             // Arrange
             _productServiceMock.Setup(s => s.GetProductById(It.IsAny<Guid>()))
@@ -90,10 +88,44 @@ namespace WebApi.Tests
             _controller = new ProductsController(_productServiceMock.Object);
 
             // Act
-            var result = await _controller.Get(Guid.NewGuid());
+            var result = await _controller.GetProductAsync(Guid.NewGuid());
 
             // Assert
             Assert.IsType<NoContentResult>(result.Result);
+        }
+
+        [Fact]
+        public async Task GivenNewProduct_WhenPostMethodIsCalled_ThenReturnsCreatedProduct()
+        {
+            // Arrange
+            var toAddNewProduct = new AddProductDto
+            {
+                Name = "Fake product",
+                Description = "Some random Description",
+                Price = 989.99M,
+                DeliveryPrice = 10.00M
+            };
+            var expectedNewProduct = new ProductDto
+            {
+                Id = Guid.NewGuid(),
+                Name = toAddNewProduct.Name,
+                Description = toAddNewProduct.Description,
+                Price = toAddNewProduct.Price,
+                DeliveryPrice = toAddNewProduct.DeliveryPrice
+            };
+            _productServiceMock.Setup(s => s.AddProduct(It.IsAny<AddProductDto>()))
+                .ReturnsAsync(expectedNewProduct);
+
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.PostAsync(toAddNewProduct);
+
+            // Assert
+            var createdItem = ((CreatedAtActionResult)result.Result).Value as ProductDto;
+
+            createdItem.Should().BeEquivalentTo(expectedNewProduct);
+            createdItem.Id.Should().NotBeEmpty();
         }
         #endregion
 

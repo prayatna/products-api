@@ -9,5 +9,7 @@ namespace WebApi.Services
         Task<ProductDto> GetProductById(Guid id);
 
         Task<ProductsDto> GetAllProducts();
+
+        Task<ProductDto> AddProduct(AddProductDto product);
     }
 }

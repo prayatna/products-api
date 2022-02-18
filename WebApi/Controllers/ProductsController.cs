@@ -5,7 +5,7 @@ using WebApi.Dto;
 using WebApi.Models;
 using WebApi.Services;
 
-namespace RefactorThis.Controllers
+namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -19,12 +19,12 @@ namespace RefactorThis.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ProductsDto>> Get()
+        public async Task<ActionResult<ProductsDto>> GetProductsAsync()
         {
             try
             {
                 var allProducts = await _productService.GetAllProducts();
-                return Ok(allProducts);
+                return allProducts;
             }
             catch (Exception ex)
             {
@@ -34,7 +34,7 @@ namespace RefactorThis.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductDto>> Get(Guid id)
+        public async Task<ActionResult<ProductDto>> GetProductAsync(Guid id)
         {
             //TODO check what isNew is
             //var product = new Product(id);
@@ -44,14 +44,30 @@ namespace RefactorThis.Controllers
             //return product;
 
             var product = await _productService.GetProductById(id);
+            if(product is null)
+            {
+                return NoContent();
+            }
+
             // Handle exception?
-            return Ok(product);
+            return product;
         }
 
         [HttpPost]
-        public void Post(Product product)
+        public async Task<ActionResult<ProductDto>> PostAsync(AddProductDto product)
         {
-            product.Save();
+            try
+            {
+                var newProduct = await _productService.AddProduct(product);
+
+                return CreatedAtAction(nameof(GetProductAsync), new { id = newProduct.Id }, newProduct);
+            }
+            catch (Exception ex)
+            {
+                //log error
+                //throw server error
+                return Problem(ex.Message);
+            }
         }
 
         [HttpPut("{id}")]
