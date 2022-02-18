@@ -46,7 +46,7 @@ namespace Data.Repository
 
         public Task UpdateAsync()
         {
-            return _dbContext.SaveChangesAsync(); //todo test updates
+            return _dbContext.SaveChangesAsync();
         }
     }
 }

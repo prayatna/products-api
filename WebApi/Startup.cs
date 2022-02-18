@@ -28,8 +28,15 @@ namespace WebApi
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
-
+            services.AddControllers(
+                options => {
+                    options.SuppressAsyncSuffixInActionNames = false;
+                })
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+                });
+            
             //Configure Services
             services.AddScoped<IProductService, ProductService>();
 

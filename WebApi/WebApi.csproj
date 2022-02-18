@@ -16,6 +16,7 @@
     <None Remove="Services\" />
     <None Remove="Dto\" />
     <None Remove="Helpers\" />
+    <None Remove="Helpers\Exceptions\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -23,6 +24,7 @@
     <Folder Include="Services\" />
     <Folder Include="Dto\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Helpers\Exceptions\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

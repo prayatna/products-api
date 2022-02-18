@@ -5,7 +5,7 @@ using WebApi.Dto;
 using WebApi.Models;
 using WebApi.Services;
 
-namespace RefactorThis.Controllers
+namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -18,14 +18,25 @@ namespace RefactorThis.Controllers
             _productService = productService;
         }
 
+        // GET /products
         [HttpGet]
-        public Products Get()
+        public async Task<ActionResult<ProductsDto>> GetProductsAsync()
         {
-            return new Products();
+            try
+            {
+                var allProducts = await _productService.GetAllProducts();
+                return allProducts;
+            }
+            catch (Exception ex)
+            {
+                // TODO: log message
+                return Problem(ex.Message);
+            }
         }
 
+        // GET /products/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductDto>> Get(Guid id)
+        public async Task<ActionResult<ProductDto>> GetProductAsync(Guid id)
         {
             //TODO check what isNew is
             //var product = new Product(id);
@@ -35,36 +46,69 @@ namespace RefactorThis.Controllers
             //return product;
 
             var product = await _productService.GetProductById(id);
-            // Handle exception?
-            return Ok(product);
-        }
-
-        [HttpPost]
-        public void Post(Product product)
-        {
-            product.Save();
-        }
-
-        [HttpPut("{id}")]
-        public void Update(Guid id, Product product)
-        {
-            var orig = new Product(id)
+            if(product is null)
             {
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                DeliveryPrice = product.DeliveryPrice
-            };
+                return NoContent();
+            }
 
-            if (!orig.IsNew)
-                orig.Save();
+            // Handle exception?
+            return product;
         }
 
-        [HttpDelete("{id}")]
-        public void Delete(Guid id)
+        // POST /products
+        [HttpPost]
+        public async Task<ActionResult<ProductDto>> PostProductAsync(AddUpdateProductDto product)
         {
-            var product = new Product(id);
-            product.Delete();
+            try
+            {
+                var newProduct = await _productService.AddProduct(product);
+
+                return CreatedAtAction(nameof(GetProductAsync), new { id = newProduct.Id }, newProduct);
+            }
+            catch (Exception ex)
+            {
+                //log error
+                //throw server error
+                return Problem(ex.Message);
+            }
+        }
+
+        // PUT /products/{id}
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateAsync(Guid id, AddUpdateProductDto product)
+        {
+            try
+            {
+                await _productService.UpdateProduct(id, product);
+                return NoContent();
+            }
+            catch(ApplicationException appEx)
+            {
+                return BadRequest(appEx.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+        // DELETE /products/{id}
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(Guid id)
+        {
+            try
+            {
+                await _productService.DeleteProduct(id);
+                return NoContent();
+            }
+            catch(ApplicationException appEx)
+            {
+                return BadRequest(appEx.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         [HttpGet("{productId}/options")]
