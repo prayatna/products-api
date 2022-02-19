@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.Entity;
 using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data.Repository
 {
@@ -13,26 +14,43 @@ namespace Data.Repository
         {
         }
 
-        public Task<ProductOptionx> GetOption(Guid productId)
+        public Task<ProductOptionx> GetOptionForProduct(Guid productId, Guid productOptionId)
         {
-            throw new NotImplementedException();
+           return _dbContext.Set<ProductOptionx>()
+                .SingleOrDefaultAsync(p => p.ProductId == productId && p.Id == productOptionId);
         }
 
-        public async Task CreateOption(Guid productId, ProductOptionx productOption)
+        public async Task<IEnumerable<ProductOptionx>> GetAllOptionsForProduct(Guid productId)
         {
-            var product = await GetByIdAsync(productId);
-            productOption.Product = product;
-
-            await _dbContext.Set<ProductOptionx>().AddAsync(productOption);
-            await UpdateAsync();
-        }
-
-        public IEnumerable<ProductOptionx> GetAllOptionsForProduct(Guid productId)
-        {
-            return _dbContext.Set<ProductOptionx>()
+            return await _dbContext.Set<ProductOptionx>()
                 .Where(p => p.Product.Id == productId)
-                .AsEnumerable();
+                .ToListAsync();
         }
-        
+
+        public async Task AddProductOption(ProductOptionx productOption)
+        {
+            await _dbContext.Set<ProductOptionx>().AddAsync(productOption);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateProductOption(Guid productOptionId, string name, string description)
+        {
+            var productOption = await _dbContext.Set<ProductOptionx>()
+                .SingleOrDefaultAsync(p => p.Id == productOptionId);
+
+            productOption.UpdateProductOption(name, description);
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteProductOption(Guid productOptionId)
+        {
+            var productOption = await _dbContext.Set<ProductOptionx>()
+                .SingleOrDefaultAsync(p => p.Id == productOptionId);
+
+            _dbContext.Set<ProductOptionx>().Remove(productOption);
+
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

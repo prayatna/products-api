@@ -18,6 +18,8 @@ namespace WebApi.Controllers
             _productService = productService;
         }
 
+        #region Products
+
         // GET /products
         [HttpGet]
         public async Task<ActionResult<ProductsDto>> GetProductsAsync()
@@ -46,7 +48,7 @@ namespace WebApi.Controllers
             //return product;
 
             var product = await _productService.GetProductById(id);
-            if(product is null)
+            if (product is null)
             {
                 return NoContent();
             }
@@ -82,7 +84,7 @@ namespace WebApi.Controllers
                 await _productService.UpdateProduct(id, product);
                 return NoContent();
             }
-            catch(ApplicationException appEx)
+            catch (ApplicationException appEx)
             {
                 return BadRequest(appEx.Message);
             }
@@ -101,7 +103,7 @@ namespace WebApi.Controllers
                 await _productService.DeleteProduct(id);
                 return NoContent();
             }
-            catch(ApplicationException appEx)
+            catch (ApplicationException appEx)
             {
                 return BadRequest(appEx.Message);
             }
@@ -111,47 +113,115 @@ namespace WebApi.Controllers
             }
         }
 
+        #endregion
+
+
+        #region ProductOptions
+
+        // GET /products/{productId}/options
         [HttpGet("{productId}/options")]
-        public ProductOptions GetOptions(Guid productId)
+        public async Task<ActionResult<ProductOptionsDto>> GetAllOptionsAsync(Guid productId)
         {
-            return new ProductOptions(productId);
-        }
-
-        [HttpGet("{productId}/options/{id}")]
-        public ProductOption GetOption(Guid productId, Guid id)
-        {
-            var option = new ProductOption(id);
-            if (option.IsNew)
-                throw new Exception();
-
-            return option;
-        }
-
-        [HttpPost("{productId}/options")]
-        public void CreateOption(Guid productId, ProductOption option)
-        {
-            option.ProductId = productId;
-            option.Save();
-        }
-
-        [HttpPut("{productId}/options/{id}")]
-        public void UpdateOption(Guid id, ProductOption option)
-        {
-            var orig = new ProductOption(id)
+            try
             {
-                Name = option.Name,
-                Description = option.Description
-            };
+                var allProductOptions = await _productService.GetAllOptionsForProduct(productId);
 
-            if (!orig.IsNew)
-                orig.Save();
+                return allProductOptions;
+            }
+            catch (Exception ex)
+            {
+                //TODO: log error
+                return Problem(ex.Message);
+            }
+        }
+
+        // GET /products/{productId}/options/{id}
+        [HttpGet("{productId}/options/{id}")]
+        public async Task<ActionResult<ProductOptionDto>> GetOptionAsync(Guid productId, Guid id)
+        {
+            try
+            {
+                var productOption = await _productService.GetOptionForProduct(productId, id);
+                return productOption;
+            }
+            catch(NullReferenceException ex)
+            {
+                return BadRequest("Invalid product or option: " + ex);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+        // POST /products/{productId}/options
+        [HttpPost("{productId}/options")]
+        public async Task<ActionResult<ProductOptionDto>> CreateOptionAsync(Guid productId,
+            AddUpdateProductOptionDto productOption)
+        {
+            try
+            {
+                var newProductOption = await _productService.AddOptionForProduct(productId, productOption);
+
+                return CreatedAtAction(nameof(GetProductAsync),
+                    new { productId = productId, id = newProductOption.Id }, newProductOption);
+            }
+            catch (ApplicationException appEx)
+            {
+                //TODO: log 
+                return BadRequest(appEx.Message);
+            }
+            catch (Exception ex)
+            {
+                //TODO: log
+                return Problem(ex.Message);
+            }
+        }
+
+        // PUT /products/{productId}/options/{id}
+        [HttpPut("{productId}/options/{id}")]
+        public async Task<ActionResult> UpdateOptionAsync(Guid id, AddUpdateProductOptionDto option)
+        {
+            try
+            {
+                await _productService.UpdateProductOption(id, option);
+
+                return NoContent();
+            }
+            catch (NullReferenceException ex)
+            {
+                // TODO: log
+                return BadRequest($"Cannot find option with id:{id} {ex}");
+            }
+            catch (Exception ex)
+            {
+                //TODO: log
+                return Problem(ex.Message);
+            }
         }
 
         [HttpDelete("{productId}/options/{id}")]
-        public void DeleteOption(Guid id)
+        public async Task<ActionResult> DeleteOption(Guid id)
         {
-            var opt = new ProductOption(id);
-            opt.Delete();
+            try
+            {
+                await _productService.DeleteProductOption(id);
+
+                return NoContent();
+            }
+            catch (NullReferenceException ex) //For singleOrDefult exception
+            {
+                //TODO: log
+                return BadRequest($"Cannot find option with id:{id} {ex}");
+            }
+            catch (Exception ex)
+            {
+                //TODO: log
+                return Problem(ex.Message);
+            }
         }
+
+        #endregion
+
     }
 }

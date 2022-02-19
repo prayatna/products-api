@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -11,7 +12,7 @@ namespace Domain.Interfaces
 
         Task<IEnumerable<TEntity>> GetAllAsync();
 
-        IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
+        IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
 
         Task AddAsync(TEntity entity);
 

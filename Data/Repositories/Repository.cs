@@ -33,7 +33,7 @@ namespace Data.Repository
             await _dbContext.SaveChangesAsync();
         }
 
-        public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
+        public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
         {
             return _dbContext.Set<TEntity>().Where(predicate);
         }

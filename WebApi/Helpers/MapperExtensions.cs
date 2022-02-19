@@ -16,5 +16,15 @@ namespace WebApi.Helpers
                 DeliveryPrice = product.DeliveryPrice
             };
         }
+
+        public static ProductOptionDto AsDto(this ProductOptionx product)
+        {
+            return new ProductOptionDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+            };
+        }
     }
 }
