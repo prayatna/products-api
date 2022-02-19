@@ -18,6 +18,8 @@ namespace WebApi.Controllers
             _productService = productService;
         }
 
+        #region Products
+
         // GET /products
         [HttpGet]
         public async Task<ActionResult<ProductsDto>> GetProductsAsync()
@@ -46,7 +48,7 @@ namespace WebApi.Controllers
             //return product;
 
             var product = await _productService.GetProductById(id);
-            if(product is null)
+            if (product is null)
             {
                 return NoContent();
             }
@@ -82,7 +84,7 @@ namespace WebApi.Controllers
                 await _productService.UpdateProduct(id, product);
                 return NoContent();
             }
-            catch(ApplicationException appEx)
+            catch (ApplicationException appEx)
             {
                 return BadRequest(appEx.Message);
             }
@@ -101,7 +103,7 @@ namespace WebApi.Controllers
                 await _productService.DeleteProduct(id);
                 return NoContent();
             }
-            catch(ApplicationException appEx)
+            catch (ApplicationException appEx)
             {
                 return BadRequest(appEx.Message);
             }
@@ -111,10 +113,26 @@ namespace WebApi.Controllers
             }
         }
 
+        #endregion
+
+
+        #region ProductOptions
+
+        // GET /products/{productId}/options
         [HttpGet("{productId}/options")]
-        public ProductOptions GetOptions(Guid productId)
+        public async Task<ActionResult<ProductOptionsDto>> GetAllOptionsAsync(Guid productId)
         {
-            return new ProductOptions(productId);
+            try
+            {
+                var allProductOptions = await _productService.GetAllProductOptionsForProduct(productId);
+
+                return allProductOptions;
+            }
+            catch (Exception ex)
+            {
+                //TODO: log error
+                return Problem(ex.Message);
+            }
         }
 
         [HttpGet("{productId}/options/{id}")]
@@ -128,18 +146,19 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("{productId}/options")]
-        public async Task<ActionResult<ProductOptionDto>> CreateOptionAsync(Guid productId, AddUpdateProductOptionDto productOption)
+        public async Task<ActionResult<ProductOptionDto>> CreateOptionAsync(Guid productId,
+            AddUpdateProductOptionDto productOption)
         {
             try
             {
-               var newProductOption = await _productService.AddOptionForProduct(productId, productOption);
+                var newProductOption = await _productService.AddOptionForProduct(productId, productOption);
                 //return CreatedAtAction(nameof(GetProductAsync),
                 //    new { productId = productId , id = newProductOption.Id }, newProductOption);
                 //TODO: create at action
 
                 return Ok();
             }
-            catch(ApplicationException appEx)
+            catch (ApplicationException appEx)
             {
                 //TODO: log 
                 return BadRequest(appEx.Message);
@@ -170,5 +189,8 @@ namespace WebApi.Controllers
             var opt = new ProductOption(id);
             opt.Delete();
         }
+
+        #endregion
+
     }
 }

@@ -243,6 +243,49 @@ namespace WebApi.Tests
             // Assert
             Assert.IsType<BadRequestObjectResult>(result.Result);
         }
+
+        [Fact]
+        public async Task GivenProductId_WhenGetProductOptionsIsCalledAndResultListHasValue_ThenReturnsAllProductOptions()
+        {
+            // Arrange
+            var allProductOptionList = new List<ProductOptionDto>
+            {
+                CreateFakeProductOption(),
+                CreateFakeProductOption()
+            };
+
+            var allExpectedProductOptions = new ProductOptionsDto(allProductOptionList);
+
+            _productServiceMock.Setup(s => s.GetAllProductOptionsForProduct(It.IsAny<Guid>()))
+                .ReturnsAsync(allExpectedProductOptions);
+
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.GetAllOptionsAsync(It.IsAny<Guid>());
+
+            // Assert
+            result.Value.Should().BeEquivalentTo(allExpectedProductOptions);
+        }
+
+        [Fact]
+        public async Task GivenProductId_WhenGetProductOptionsIsCalledAndResultListHasNoValue_ThenReturnsEmptyList()
+        {
+            // Arrange
+            var expectedEmptyProductOptionList = new ProductOptionsDto();
+
+            _productServiceMock.Setup(s => s.GetAllProductOptionsForProduct(It.IsAny<Guid>()))
+                .ReturnsAsync(expectedEmptyProductOptionList);
+
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.GetAllOptionsAsync(Guid.NewGuid());
+
+            // Assert
+            result.Value.Items.Should().BeEmpty();
+        }
+
         #endregion
 
         public ProductDto CreateFakeProduct()
@@ -256,6 +299,15 @@ namespace WebApi.Tests
                 DeliveryPrice = (decimal)random.Next(50),
             };
         }
-        
+
+        public ProductOptionDto CreateFakeProductOption()
+        {
+            return new ProductOptionDto
+            {
+                Id = Guid.NewGuid(),
+                Name = Guid.NewGuid().ToString(),
+                Description = "some random description",
+            };
+        }
     }
 }

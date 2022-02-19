@@ -8,8 +8,7 @@ namespace Domain.Interfaces
     public interface IProductRepository : IRepository<Productx>
     {
         // Product Options
-        //TODO: add what is required
-        IEnumerable<ProductOptionx> GetAllOptionsForProduct(Guid productId);
+        Task<IEnumerable<ProductOptionx>> GetAllOptionsForProduct(Guid productId);
 
         Task<ProductOptionx> GetOption(Guid productId);
 

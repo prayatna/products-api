@@ -73,12 +73,24 @@ namespace WebApi.Services
 
             await _productRepository.DeleteAsync(existingProduct); // TODO: cascade delete product options
         }
-        
+
         #endregion
 
         #region ProductOptions
 
-        public async Task<ProductOptionDto> AddOptionForProduct(Guid productId, AddUpdateProductOptionDto productOptionDto)
+        public async Task<ProductOptionsDto> GetAllProductOptionsForProduct(Guid productId)
+        {
+            var productOptions = (await _productRepository.GetAllOptionsForProduct(productId))
+                .Select(po => po.AsDto())
+                .ToList();
+
+            var allProductOptions = new ProductOptionsDto(productOptions);
+
+            return allProductOptions;
+        }
+
+        public async Task<ProductOptionDto> AddOptionForProduct(Guid productId,
+            AddUpdateProductOptionDto productOptionDto)
         {
             var product = await _productRepository.GetByIdAsync(productId);
 
