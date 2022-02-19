@@ -353,6 +353,19 @@ namespace WebApi.Tests
             // Assert
             Assert.IsType<BadRequestObjectResult>(result);
         }
+
+        [Fact]
+        public async Task GivenProductOptionId_WhenDeleteProductOptionMethodIsCalled_ThenReturnsNoContent()
+        {
+            // Arrange
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.DeleteOption(Guid.NewGuid());
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
         #endregion
 
         public ProductDto CreateFakeProduct()

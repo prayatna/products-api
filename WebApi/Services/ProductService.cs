@@ -116,6 +116,11 @@ namespace WebApi.Services
             await _productRepository.UpdateProductOption(productId, productOptionDto.Name, productOptionDto.Description);
         }
 
+        public async Task DeleteProductOption(Guid productId)
+        {
+            await _productRepository.DeleteProductOption(productId);
+        }
+
         #endregion
     }
 }

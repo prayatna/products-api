@@ -24,5 +24,7 @@ namespace WebApi.Services
             AddUpdateProductOptionDto productOptionDto);
 
         Task UpdateProductOption(Guid productId, AddUpdateProductOptionDto productOptionDto);
+
+        Task DeleteProductOption(Guid productId);
     }
 }

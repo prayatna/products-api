@@ -201,10 +201,24 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete("{productId}/options/{id}")]
-        public void DeleteOption(Guid id)
+        public async Task<ActionResult> DeleteOption(Guid id)
         {
-            var opt = new ProductOption(id);
-            opt.Delete();
+            try
+            {
+                await _productService.DeleteProductOption(id);
+
+                return NoContent();
+            }
+            catch (NullReferenceException ex) //For singleOrDefult exception
+            {
+                //TODO: log
+                return BadRequest($"Cannot find option with id:{id} {ex}");
+            }
+            catch (Exception ex)
+            {
+                //TODO: log
+                return Problem(ex.Message);
+            }
         }
 
         #endregion

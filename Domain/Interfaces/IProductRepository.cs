@@ -16,6 +16,6 @@ namespace Domain.Interfaces
 
         Task UpdateProductOption(Guid productOptionId, string name, string description);
 
-        //Task DeleteOption(Guid id);
+        Task DeleteProductOption(Guid productOptionId);
     }
 }

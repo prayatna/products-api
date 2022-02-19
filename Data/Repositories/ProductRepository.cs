@@ -42,5 +42,15 @@ namespace Data.Repository
 
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task DeleteProductOption(Guid productOptionId)
+        {
+            var productOption = await _dbContext.Set<ProductOptionx>()
+                .SingleOrDefaultAsync(p => p.Id == productOptionId);
+
+            _dbContext.Set<ProductOptionx>().Remove(productOption);
+
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }
