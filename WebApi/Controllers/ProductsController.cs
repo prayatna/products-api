@@ -178,17 +178,26 @@ namespace WebApi.Controllers
             }
         }
 
+        // PUT /products/{productId}/options/{id}
         [HttpPut("{productId}/options/{id}")]
-        public void UpdateOption(Guid id, ProductOption option)
+        public async Task<ActionResult> UpdateOptionAsync(Guid id, AddUpdateProductOptionDto option)
         {
-            var orig = new ProductOption(id)
+            try
             {
-                Name = option.Name,
-                Description = option.Description
-            };
+                await _productService.UpdateProductOption(id, option);
 
-            if (!orig.IsNew)
-                orig.Save();
+                return NoContent();
+            }
+            catch (NullReferenceException ex)
+            {
+                // TODO: log
+                return BadRequest($"Cannot find option with id:{id} {ex}");
+            }
+            catch (Exception ex)
+            {
+                //TODO: log
+                return Problem(ex.Message);
+            }
         }
 
         [HttpDelete("{productId}/options/{id}")]

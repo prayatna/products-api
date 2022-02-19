@@ -22,5 +22,7 @@ namespace WebApi.Services
 
         Task<ProductOptionDto> AddOptionForProduct(Guid productId,
             AddUpdateProductOptionDto productOptionDto);
+
+        Task UpdateProductOption(Guid productId, AddUpdateProductOptionDto productOptionDto);
     }
 }

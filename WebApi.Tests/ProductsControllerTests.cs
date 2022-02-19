@@ -324,6 +324,35 @@ namespace WebApi.Tests
             Assert.IsType<BadRequestObjectResult>(result.Result);
         }
 
+        [Fact]
+        public async Task GivenProductOptionIdAndUpdatedProductOption_WhenUpdateProductOptionMethodIsCalled_ThenReturnsNoContent()
+        {
+            // Arrange
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.UpdateOptionAsync(Guid.NewGuid(), new AddUpdateProductOptionDto());
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task GivenNonExistantProductOptionIdAndUpdatedProductOption_WhenUpdateProductOptionMethodIsCalled_ThenReturnsBadRequest()
+        {
+            // Arrange
+            var nonExistantProductOptionId = Guid.NewGuid();
+            _productServiceMock.Setup(s => s.UpdateProductOption(It.IsAny<Guid>(), It.IsAny<AddUpdateProductOptionDto>()))
+                .ThrowsAsync(new NullReferenceException());
+
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.UpdateOptionAsync(Guid.NewGuid(), new AddUpdateProductOptionDto());
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
         #endregion
 
         public ProductDto CreateFakeProduct()

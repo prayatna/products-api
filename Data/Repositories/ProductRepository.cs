@@ -32,5 +32,15 @@ namespace Data.Repository
             await _dbContext.Set<ProductOptionx>().AddAsync(productOption);
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task UpdateProductOption(Guid productOptionId, string name, string description)
+        {
+            var productOption = await _dbContext.Set<ProductOptionx>()
+                .SingleOrDefaultAsync(p => p.Id == productOptionId);
+
+            productOption.UpdateProductOption(name, description);
+
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

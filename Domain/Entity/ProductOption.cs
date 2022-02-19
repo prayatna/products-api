@@ -25,5 +25,11 @@ namespace Domain.Entity
             Description = description;
             Product = product;
         }
+
+        public void UpdateProductOption(string name, string description)
+        {
+            Name = name;
+            Description = description;
+        }
     }
 }

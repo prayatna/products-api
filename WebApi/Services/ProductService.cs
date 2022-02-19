@@ -111,6 +111,11 @@ namespace WebApi.Services
             return newProductOption.AsDto();
         }
 
+        public async Task UpdateProductOption(Guid productId, AddUpdateProductOptionDto productOptionDto)
+        {
+            await _productRepository.UpdateProductOption(productId, productOptionDto.Name, productOptionDto.Description);
+        }
+
         #endregion
     }
 }
