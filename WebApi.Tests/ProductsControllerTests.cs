@@ -190,6 +190,61 @@ namespace WebApi.Tests
 
         #endregion
 
+        #region ProductOptions
+
+        [Fact]
+        public async Task GivenNewProductOption_WhenPostMethodIsCalled_ThenReturnsCreatedProductOption()
+        {
+            // Arrange
+            var toAddNewProductOption = new AddUpdateProductOptionDto
+            {
+                Name = "Fake product option",
+                Description = "Some random Description",
+            };
+            var expectedNewProductOption = new ProductOptionDto
+            {
+                Id = Guid.NewGuid(),
+                Name = toAddNewProductOption.Name,
+                Description = toAddNewProductOption.Description,
+            };
+            _productServiceMock.Setup(s => s.AddOptionForProduct(It.IsAny<Guid>(),It.IsAny<AddUpdateProductOptionDto>()))
+                .ReturnsAsync(expectedNewProductOption);
+
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.CreateOptionAsync(Guid.NewGuid(), toAddNewProductOption);
+
+            // Assert
+            var createdItem = ((CreatedAtActionResult)result.Result).Value as ProductOptionDto;
+
+            createdItem.Should().BeEquivalentTo(expectedNewProductOption);
+            createdItem.Id.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public async Task GivenInvalidProductIdAndNewProductOption_WhenPostMethodIsCalled_ThenReturnsBadRequest()
+        {
+            // Arrange
+            var toAddNewProductOption = new AddUpdateProductOptionDto
+            {
+                Name = "Fake product option",
+                Description = "Some random Description",
+            };
+            
+            _productServiceMock.Setup(s => s.AddOptionForProduct(It.IsAny<Guid>(), It.IsAny<AddUpdateProductOptionDto>()))
+                .ThrowsAsync(new ApplicationException("Cannot have production option without a product"));
+
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.CreateOptionAsync(Guid.NewGuid(), toAddNewProductOption);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result.Result);
+        }
+        #endregion
+
         public ProductDto CreateFakeProduct()
         {
             return new ProductDto

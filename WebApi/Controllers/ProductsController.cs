@@ -128,10 +128,27 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("{productId}/options")]
-        public void CreateOption(Guid productId, ProductOption option)
+        public async Task<ActionResult<ProductOptionDto>> CreateOptionAsync(Guid productId, AddUpdateProductOptionDto productOption)
         {
-            option.ProductId = productId;
-            option.Save();
+            try
+            {
+               var newProductOption = await _productService.AddOptionForProduct(productId, productOption);
+                //return CreatedAtAction(nameof(GetProductAsync),
+                //    new { productId = productId , id = newProductOption.Id }, newProductOption);
+                //TODO: create at action
+
+                return Ok();
+            }
+            catch(ApplicationException appEx)
+            {
+                //TODO: log 
+                return BadRequest(appEx.Message);
+            }
+            catch (Exception ex)
+            {
+                //TODO: log
+                return Problem(ex.Message);
+            }
         }
 
         [HttpPut("{productId}/options/{id}")]

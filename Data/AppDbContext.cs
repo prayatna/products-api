@@ -16,5 +16,14 @@ namespace Data
         {
             optionsBuilder.UseSqlite("Data Source=App_Data/products.db");
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // configures one-to-many relationship
+            modelBuilder.Entity<Productx>()
+                .HasMany(product => product.ProductOptions)
+                .WithOne(prductOption => prductOption.Product)
+                .IsRequired();
+        }
     }
 }

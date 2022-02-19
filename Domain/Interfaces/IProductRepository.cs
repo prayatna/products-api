@@ -13,7 +13,7 @@ namespace Domain.Interfaces
 
         Task<ProductOptionx> GetOption(Guid productId);
 
-        Task CreateOption(Guid productId, ProductOptionx productOption);
+        Task AddProductOption(ProductOptionx productOption);
 
         //Task UpdateOption(Guid id, ProductOptionx productOption);
 

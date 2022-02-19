@@ -18,21 +18,17 @@ namespace Data.Repository
             throw new NotImplementedException();
         }
 
-        public async Task CreateOption(Guid productId, ProductOptionx productOption)
-        {
-            var product = await GetByIdAsync(productId);
-            productOption.Product = product;
-
-            await _dbContext.Set<ProductOptionx>().AddAsync(productOption);
-            await UpdateAsync();
-        }
-
         public IEnumerable<ProductOptionx> GetAllOptionsForProduct(Guid productId)
         {
             return _dbContext.Set<ProductOptionx>()
                 .Where(p => p.Product.Id == productId)
                 .AsEnumerable();
         }
-        
+
+        public async Task AddProductOption(ProductOptionx productOption)
+        {
+            await _dbContext.Set<ProductOptionx>().AddAsync(productOption);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }
