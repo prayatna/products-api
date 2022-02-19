@@ -14,9 +14,10 @@ namespace Data.Repository
         {
         }
 
-        public Task<ProductOptionx> GetOption(Guid productId)
+        public Task<ProductOptionx> GetOptionForProduct(Guid productId, Guid productOptionId)
         {
-            throw new NotImplementedException();
+           return _dbContext.Set<ProductOptionx>()
+                .SingleOrDefaultAsync(p => p.ProductId == productId && p.Id == productOptionId);
         }
 
         public async Task<IEnumerable<ProductOptionx>> GetAllOptionsForProduct(Guid productId)

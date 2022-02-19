@@ -124,7 +124,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                var allProductOptions = await _productService.GetAllProductOptionsForProduct(productId);
+                var allProductOptions = await _productService.GetAllOptionsForProduct(productId);
 
                 return allProductOptions;
             }
@@ -135,16 +135,26 @@ namespace WebApi.Controllers
             }
         }
 
+        // GET /products/{productId}/options/{id}
         [HttpGet("{productId}/options/{id}")]
-        public ProductOption GetOption(Guid productId, Guid id)
+        public async Task<ActionResult<ProductOptionDto>> GetOptionAsync(Guid productId, Guid id)
         {
-            var option = new ProductOption(id);
-            if (option.IsNew)
-                throw new Exception();
-
-            return option;
+            try
+            {
+                var productOption = await _productService.GetOptionForProduct(productId, id);
+                return productOption;
+            }
+            catch(NullReferenceException ex)
+            {
+                return BadRequest("Invalid product or option: " + ex);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
+        // POST /products/{productId}/options
         [HttpPost("{productId}/options")]
         public async Task<ActionResult<ProductOptionDto>> CreateOptionAsync(Guid productId,
             AddUpdateProductOptionDto productOption)
@@ -152,11 +162,9 @@ namespace WebApi.Controllers
             try
             {
                 var newProductOption = await _productService.AddOptionForProduct(productId, productOption);
-                //return CreatedAtAction(nameof(GetProductAsync),
-                //    new { productId = productId , id = newProductOption.Id }, newProductOption);
-                //TODO: create at action
 
-                return Ok();
+                return CreatedAtAction(nameof(GetProductAsync),
+                    new { productId = productId, id = newProductOption.Id }, newProductOption);
             }
             catch (ApplicationException appEx)
             {

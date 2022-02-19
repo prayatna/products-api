@@ -10,7 +10,7 @@ namespace Domain.Interfaces
         // Product Options
         Task<IEnumerable<ProductOptionx>> GetAllOptionsForProduct(Guid productId);
 
-        Task<ProductOptionx> GetOption(Guid productId);
+        Task<ProductOptionx> GetOptionForProduct(Guid productId, Guid productOptionId);
 
         Task AddProductOption(ProductOptionx productOption);
 

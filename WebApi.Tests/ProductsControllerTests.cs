@@ -256,7 +256,7 @@ namespace WebApi.Tests
 
             var allExpectedProductOptions = new ProductOptionsDto(allProductOptionList);
 
-            _productServiceMock.Setup(s => s.GetAllProductOptionsForProduct(It.IsAny<Guid>()))
+            _productServiceMock.Setup(s => s.GetAllOptionsForProduct(It.IsAny<Guid>()))
                 .ReturnsAsync(allExpectedProductOptions);
 
             _controller = new ProductsController(_productServiceMock.Object);
@@ -274,7 +274,7 @@ namespace WebApi.Tests
             // Arrange
             var expectedEmptyProductOptionList = new ProductOptionsDto();
 
-            _productServiceMock.Setup(s => s.GetAllProductOptionsForProduct(It.IsAny<Guid>()))
+            _productServiceMock.Setup(s => s.GetAllOptionsForProduct(It.IsAny<Guid>()))
                 .ReturnsAsync(expectedEmptyProductOptionList);
 
             _controller = new ProductsController(_productServiceMock.Object);
@@ -284,6 +284,44 @@ namespace WebApi.Tests
 
             // Assert
             result.Value.Items.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task GivenProductIdAndOptionId_WhenGetOptionMethodIsCalledAndResultHasValue_ThenReturnsExpectedOption()
+        {
+            // Arrange
+            var productId = Guid.NewGuid();
+            var optionId = Guid.NewGuid();
+            var expectedOption = CreateFakeProductOption(optionId);
+
+            _productServiceMock.Setup(s => s.GetOptionForProduct(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .ReturnsAsync(expectedOption);
+
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.GetOptionAsync(productId, optionId);
+
+            // Assert
+            result.Value.Should().BeEquivalentTo(expectedOption);
+        }
+
+        [Fact]
+        public async Task GivenProductIdAndOptionId_WhenGetOptionMethodIsCalledAndResultHasNoValue_ThenReturnsBadRequest()
+        {
+            // Arrange
+            var expectedOption = CreateFakeProductOption();
+
+            _productServiceMock.Setup(s => s.GetOptionForProduct(It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .ThrowsAsync(new NullReferenceException());
+
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.GetOptionAsync(Guid.NewGuid(), Guid.NewGuid());
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(result.Result);
         }
 
         #endregion
@@ -300,11 +338,11 @@ namespace WebApi.Tests
             };
         }
 
-        public ProductOptionDto CreateFakeProductOption()
+        public ProductOptionDto CreateFakeProductOption(Guid? optionId = null)
         {
             return new ProductOptionDto
             {
-                Id = Guid.NewGuid(),
+                Id = optionId == null ? Guid.NewGuid() : optionId.Value,
                 Name = Guid.NewGuid().ToString(),
                 Description = "some random description",
             };

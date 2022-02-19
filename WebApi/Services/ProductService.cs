@@ -78,7 +78,7 @@ namespace WebApi.Services
 
         #region ProductOptions
 
-        public async Task<ProductOptionsDto> GetAllProductOptionsForProduct(Guid productId)
+        public async Task<ProductOptionsDto> GetAllOptionsForProduct(Guid productId)
         {
             var productOptions = (await _productRepository.GetAllOptionsForProduct(productId))
                 .Select(po => po.AsDto())
@@ -87,6 +87,11 @@ namespace WebApi.Services
             var allProductOptions = new ProductOptionsDto(productOptions);
 
             return allProductOptions;
+        }
+
+        public async Task<ProductOptionDto> GetOptionForProduct(Guid productId, Guid productOptionId)
+        {
+            return (await _productRepository.GetOptionForProduct(productId, productOptionId)).AsDto();
         }
 
         public async Task<ProductOptionDto> AddOptionForProduct(Guid productId,
