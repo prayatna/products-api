@@ -41,6 +41,17 @@ namespace WebApi.Services
             return allProducts;
         }
 
+        public async Task<ProductsDto> GetAllProductsByName(string name)
+        {
+            var products = (await _productRepository.GetProductsByName(name))
+                .Select(p => p.AsDto())
+                .ToList(); ;
+
+            var allProducts = new ProductsDto(products);
+
+            return allProducts;
+        }
+
         public async Task<ProductDto> AddProduct(AddUpdateProductDto product)
         {
 

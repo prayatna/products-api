@@ -7,6 +7,8 @@ namespace Domain.Interfaces
 {
     public interface IProductRepository : IRepository<Product>
     {
+        Task<IEnumerable<Product>> GetProductsByName(string name);
+
         // Product Options
         Task<IEnumerable<ProductOption>> GetAllOptionsForProduct(Guid productId);
 

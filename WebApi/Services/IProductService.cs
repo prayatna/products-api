@@ -10,6 +10,8 @@ namespace WebApi.Services
 
         Task<ProductsDto> GetAllProducts();
 
+        Task<ProductsDto> GetAllProductsByName(string name);
+
         Task<ProductDto> AddProduct(AddUpdateProductDto product);
 
         Task UpdateProduct(Guid productId, AddUpdateProductDto product);
