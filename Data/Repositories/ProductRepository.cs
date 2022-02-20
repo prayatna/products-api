@@ -14,6 +14,12 @@ namespace Data.Repository
         {
         }
 
+        public async Task<IEnumerable<Product>> GetProductsByName(string name)
+        {
+            return await _dbContext.Set<Product>().Where(x => EF.Functions.Like(x.Name, $"%{name}%"))
+                .ToListAsync();
+        }
+
         public Task<ProductOption> GetOptionForProduct(Guid productId, Guid productOptionId)
         {
            return _dbContext.Set<ProductOption>()

@@ -36,7 +36,7 @@ namespace WebApi.Tests
             _controller = new ProductsController(_productServiceMock.Object);
 
             // Act
-            var result = await _controller.GetProductsAsync();
+            var result = await _controller.GetProductsAsync(string.Empty);
 
             // Assert
             result.Value.Should().BeEquivalentTo(allExpectedProducts);
@@ -54,10 +54,33 @@ namespace WebApi.Tests
             _controller = new ProductsController(_productServiceMock.Object);
 
             // Act
-            var result = await _controller.GetProductsAsync();
+            var result = await _controller.GetProductsAsync(string.Empty);
 
             // Assert
             result.Value.Items.Should().BeEmpty();
+            _productServiceMock.Verify(service => service.GetAllProducts(), Times.Once());
+            _productServiceMock.Verify(service => service.GetAllProductsByName(It.IsAny<string>()), Times.Never());
+        }
+
+        [Fact]
+        public async Task GivenGetProductsAndNameAsQuery_WhenMethodIsCalledAndResultListHasNoValue_ThenReturnsEmptyList()
+        {
+            // Arrange
+            var searchName = "randomName";
+            var expectedEmptyProductList = new ProductsDto();
+
+            _productServiceMock.Setup(s => s.GetAllProductsByName(searchName))
+                .ReturnsAsync(expectedEmptyProductList);
+
+            _controller = new ProductsController(_productServiceMock.Object);
+
+            // Act
+            var result = await _controller.GetProductsAsync(searchName);
+
+            // Assert
+            result.Value.Items.Should().BeEmpty();
+            _productServiceMock.Verify(service => service.GetAllProducts(), Times.Never());
+            _productServiceMock.Verify(service => service.GetAllProductsByName(searchName), Times.Once());
         }
 
         [Fact]
@@ -83,7 +106,7 @@ namespace WebApi.Tests
         {
             // Arrange
             _productServiceMock.Setup(s => s.GetProductById(It.IsAny<Guid>()))
-                .ReturnsAsync((ProductDto)null);
+                .ThrowsAsync(new ApplicationException($"Product with id not found"));
 
             _controller = new ProductsController(_productServiceMock.Object);
 
@@ -91,7 +114,7 @@ namespace WebApi.Tests
             var result = await _controller.GetProductAsync(Guid.NewGuid());
 
             // Assert
-            Assert.IsType<NoContentResult>(result.Result);
+            Assert.IsType<BadRequestObjectResult>(result.Result);
         }
 
         [Fact]

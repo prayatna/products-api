@@ -22,11 +22,22 @@ namespace WebApi.Controllers
 
         // GET /products
         [HttpGet]
-        public async Task<ActionResult<ProductsDto>> GetProductsAsync()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<ProductsDto>> GetProductsAsync([FromQuery(Name = "name")] string name)
         {
             try
             {
-                var allProducts = await _productService.GetAllProducts();
+                ProductsDto allProducts;
+
+                if (string.IsNullOrEmpty(name))
+                {
+                    allProducts = await _productService.GetAllProducts();
+                }
+                else
+                {
+                    allProducts = await _productService.GetAllProductsByName(name);
+                }
+
                 return allProducts;
             }
             catch (Exception ex)
@@ -57,6 +68,30 @@ namespace WebApi.Controllers
                 return Problem(ex.Message);
             }
            
+        }
+
+        // GET /products?name={name}
+        [HttpGet("name")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<ActionResult<ProductsDto>> GetProductByNameAsync([FromQuery(Name = "name")] string name)
+        {
+            try
+            {
+                var products = await _productService.GetAllProductsByName(name);
+
+                if(products is null)
+                {
+                    return NoContent(); 
+                }
+
+                return products;
+            }
+
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         // POST /products
