@@ -18,7 +18,7 @@ namespace Domain.Interfaces
 
         Task DeleteAsync(TEntity entity);
 
-        Task UpdateAsync(); //TODO: test
+        Task UpdateAsync();
 
     }
 }

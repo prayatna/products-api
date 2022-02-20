@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using WebApi.Dto;
 using WebApi.Services;
 
@@ -12,10 +13,12 @@ namespace WebApi.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(IProductService productService, ILogger<ProductsController> logger)
         {
             _productService = productService;
+            _logger = logger;
         }
 
         #region Products
@@ -42,7 +45,7 @@ namespace WebApi.Controllers
             }
             catch (Exception ex)
             {
-                // TODO: log message
+                _logger.LogError(default, ex, ex.Message);
                 return Problem(ex.Message);
             }
         }
@@ -65,6 +68,7 @@ namespace WebApi.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(default, ex, ex.Message);
                 return Problem(ex.Message);
             }
            
@@ -90,6 +94,7 @@ namespace WebApi.Controllers
 
             catch (Exception ex)
             {
+                _logger.LogError(default, ex, ex.Message);
                 return Problem(ex.Message);
             }
         }
@@ -108,8 +113,7 @@ namespace WebApi.Controllers
             }
             catch (Exception ex)
             {
-                //log error
-                //throw server error
+                _logger.LogError(default, ex, ex.Message);
                 return Problem(ex.Message);
             }
         }
@@ -131,6 +135,7 @@ namespace WebApi.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(default, ex, ex.Message);
                 return Problem(ex.Message);
             }
         }
@@ -152,6 +157,7 @@ namespace WebApi.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(default, ex, ex.Message);
                 return Problem(ex.Message);
             }
         }
@@ -174,7 +180,7 @@ namespace WebApi.Controllers
             }
             catch (Exception ex)
             {
-                //TODO: log error
+                _logger.LogError(default, ex, ex.Message);
                 return Problem(ex.Message);
             }
         }
@@ -196,6 +202,7 @@ namespace WebApi.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(default, ex, ex.Message);
                 return Problem(ex.Message);
             }
         }
@@ -216,12 +223,12 @@ namespace WebApi.Controllers
             }
             catch (ApplicationException appEx)
             {
-                //TODO: log 
+                _logger.LogError(default, appEx, appEx.Message);
                 return BadRequest(appEx.Message);
             }
             catch (Exception ex)
             {
-                //TODO: log
+                _logger.LogError(default, ex, ex.Message);
                 return Problem(ex.Message);
             }
         }
@@ -240,12 +247,12 @@ namespace WebApi.Controllers
             }
             catch (NullReferenceException ex)
             {
-                // TODO: log
+                _logger.LogError(default, ex, ex.Message);
                 return BadRequest($"Cannot find option with id:{id} {ex}");
             }
             catch (Exception ex)
             {
-                //TODO: log
+                _logger.LogError(default, ex, ex.Message);
                 return Problem(ex.Message);
             }
         }
@@ -263,12 +270,12 @@ namespace WebApi.Controllers
             }
             catch (NullReferenceException ex) //For singleOrDefult exception
             {
-                //TODO: log
+                _logger.LogError(default, ex, ex.Message);
                 return BadRequest($"Cannot find option with id:{id} {ex}");
             }
             catch (Exception ex)
             {
-                //TODO: log
+                _logger.LogError(default, ex, ex.Message);
                 return Problem(ex.Message);
             }
         }

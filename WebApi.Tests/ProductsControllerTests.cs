@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using WebApi.Controllers;
 using WebApi.Dto;
@@ -14,6 +15,7 @@ namespace WebApi.Tests
     public class ProductsControllerTests
     {
         private readonly Mock<IProductService> _productServiceMock = new();
+        private readonly Mock<ILogger<ProductsController>> _loggerMock = new();
         private readonly Random random = new();
         private ProductsController _controller;
 
@@ -33,7 +35,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.GetAllProducts())
                 .ReturnsAsync(allExpectedProducts);
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.GetProductsAsync(string.Empty);
@@ -51,7 +53,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.GetAllProducts())
                 .ReturnsAsync(expectedEmptyProductList);
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.GetProductsAsync(string.Empty);
@@ -72,7 +74,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.GetAllProductsByName(searchName))
                 .ReturnsAsync(expectedEmptyProductList);
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.GetProductsAsync(searchName);
@@ -92,7 +94,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.GetProductById(It.IsAny<Guid>()))
                 .ReturnsAsync(expectedItem);
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.GetProductAsync(Guid.NewGuid());
@@ -108,7 +110,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.GetProductById(It.IsAny<Guid>()))
                 .ThrowsAsync(new ApplicationException($"Product with id not found"));
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.GetProductAsync(Guid.NewGuid());
@@ -139,7 +141,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.AddProduct(It.IsAny<AddUpdateProductDto>()))
                 .ReturnsAsync(expectedNewProduct);
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.PostProductAsync(toAddNewProduct);
@@ -155,7 +157,7 @@ namespace WebApi.Tests
         public async Task GivenProductIdAndUpdatedProduct_WhenUpdateProductMethodIsCalled_ThenReturnsNoContent()
         {
             // Arrange
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.UpdateAsync(Guid.NewGuid(), new AddUpdateProductDto());
@@ -172,7 +174,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.UpdateProduct(It.IsAny<Guid>(), It.IsAny<AddUpdateProductDto>()))
                 .ThrowsAsync(new ApplicationException($"No product found for productId: {nonExistantProductId}"));
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.UpdateAsync(Guid.NewGuid(), new AddUpdateProductDto());
@@ -185,7 +187,7 @@ namespace WebApi.Tests
         public async Task GivenProductId_WhenDeleteProductMethodIsCalled_ThenReturnsNoContent()
         {
             // Arrange
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.Delete(Guid.NewGuid());
@@ -202,7 +204,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.DeleteProduct(It.IsAny<Guid>()))
                 .ThrowsAsync(new ApplicationException($"No product found for productId: {nonExistantProductId}"));
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.Delete(Guid.NewGuid());
@@ -233,7 +235,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.AddOptionForProduct(It.IsAny<Guid>(),It.IsAny<AddUpdateProductOptionDto>()))
                 .ReturnsAsync(expectedNewProductOption);
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.CreateOptionAsync(Guid.NewGuid(), toAddNewProductOption);
@@ -258,7 +260,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.AddOptionForProduct(It.IsAny<Guid>(), It.IsAny<AddUpdateProductOptionDto>()))
                 .ThrowsAsync(new ApplicationException("Cannot have production option without a product"));
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.CreateOptionAsync(Guid.NewGuid(), toAddNewProductOption);
@@ -282,7 +284,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.GetAllOptionsForProduct(It.IsAny<Guid>()))
                 .ReturnsAsync(allExpectedProductOptions);
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.GetAllOptionsAsync(It.IsAny<Guid>());
@@ -300,7 +302,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.GetAllOptionsForProduct(It.IsAny<Guid>()))
                 .ReturnsAsync(expectedEmptyProductOptionList);
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.GetAllOptionsAsync(Guid.NewGuid());
@@ -320,7 +322,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.GetOptionForProduct(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .ReturnsAsync(expectedOption);
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.GetOptionAsync(productId, optionId);
@@ -338,7 +340,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.GetOptionForProduct(It.IsAny<Guid>(), It.IsAny<Guid>()))
                 .ThrowsAsync(new NullReferenceException());
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.GetOptionAsync(Guid.NewGuid(), Guid.NewGuid());
@@ -351,7 +353,7 @@ namespace WebApi.Tests
         public async Task GivenProductOptionIdAndUpdatedProductOption_WhenUpdateProductOptionMethodIsCalled_ThenReturnsNoContent()
         {
             // Arrange
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.UpdateOptionAsync(Guid.NewGuid(), new AddUpdateProductOptionDto());
@@ -368,7 +370,7 @@ namespace WebApi.Tests
             _productServiceMock.Setup(s => s.UpdateProductOption(It.IsAny<Guid>(), It.IsAny<AddUpdateProductOptionDto>()))
                 .ThrowsAsync(new NullReferenceException());
 
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.UpdateOptionAsync(Guid.NewGuid(), new AddUpdateProductOptionDto());
@@ -381,7 +383,7 @@ namespace WebApi.Tests
         public async Task GivenProductOptionId_WhenDeleteProductOptionMethodIsCalled_ThenReturnsNoContent()
         {
             // Arrange
-            _controller = new ProductsController(_productServiceMock.Object);
+            _controller = new ProductsController(_productServiceMock.Object, _loggerMock.Object);
 
             // Act
             var result = await _controller.DeleteOption(Guid.NewGuid());
