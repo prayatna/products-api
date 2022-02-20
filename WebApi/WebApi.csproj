@@ -17,6 +17,7 @@
     <None Remove="Helpers\" />
     <None Remove="Helpers\Exceptions\" />
     <None Remove="Microsoft.EntityFrameworkCore.Design" />
+    <None Remove="Swashbuckle.AspNetCore" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -31,5 +32,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 </Project>
