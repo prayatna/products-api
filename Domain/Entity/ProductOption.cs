@@ -1,7 +1,7 @@
 using System;
 namespace Domain.Entity
 {
-    public class ProductOptionx
+    public class ProductOption
     {
         public Guid Id { get; private set; }
 
@@ -11,14 +11,14 @@ namespace Domain.Entity
 
         public Guid ProductId { get; private set; }
 
-        public Productx Product { get; private set; }
+        public Product Product { get; private set; }
 
-        public ProductOptionx()
+        public ProductOption()
         {
 
         }
 
-        public ProductOptionx(string name, string description, Productx product)
+        public ProductOption(string name, string description, Product product)
         {
             Id = Guid.NewGuid();
             Name = name;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Domain.Entity
 {
-    public class Productx
+    public class Product
     {
         public Guid Id { get; private set; }
 
@@ -15,9 +15,9 @@ namespace Domain.Entity
 
         public decimal DeliveryPrice { get; private set; }
 
-        public List<ProductOptionx> ProductOptions { get; } = new();
+        public List<ProductOption> ProductOptions { get; } = new();
 
-        public Productx(string name, string description, decimal price,
+        public Product(string name, string description, decimal price,
             decimal deliveryPrice)
         {
             Id = Guid.NewGuid();

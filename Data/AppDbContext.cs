@@ -5,8 +5,8 @@ namespace Data
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<Productx> Products { get; set; }
-        public DbSet<ProductOptionx> ProductOptions { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductOption> ProductOptions { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
         {
@@ -20,7 +20,7 @@ namespace Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // configures one-to-many relationship
-            modelBuilder.Entity<Productx>()
+            modelBuilder.Entity<Product>()
                 .HasMany(product => product.ProductOptions)
                 .WithOne(prductOption => prductOption.Product)
                 .IsRequired();

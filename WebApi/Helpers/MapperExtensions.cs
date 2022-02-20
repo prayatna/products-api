@@ -5,7 +5,7 @@ namespace WebApi.Helpers
 {
     public static class MapperExtensions
     {
-        public static ProductDto AsDto(this Productx product)
+        public static ProductDto AsDto(this Product product)
         {
             return new ProductDto
             {
@@ -17,7 +17,7 @@ namespace WebApi.Helpers
             };
         }
 
-        public static ProductOptionDto AsDto(this ProductOptionx product)
+        public static ProductOptionDto AsDto(this ProductOption product)
         {
             return new ProductOptionDto
             {
