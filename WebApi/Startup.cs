@@ -27,7 +27,7 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddRouting(options => options.LowercaseUrls = true);
             services.AddControllers(
                 options => {
                     options.SuppressAsyncSuffixInActionNames = false;
@@ -36,10 +36,10 @@ namespace WebApi
                 {
                     options.JsonSerializerOptions.PropertyNamingPolicy = null;
                 });
-            
+            services.AddSwaggerGen();
+
             //Configure Services
             services.AddScoped<IProductService, ProductService>();
-
 
             //Configure SQLite DBContext
             services.AddInfrastructure();
@@ -50,6 +50,12 @@ namespace WebApi
         {
             if (env.IsDevelopment())
             {
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("./swagger/v1/swagger.json", "v1");
+                    options.RoutePrefix = string.Empty;
+                });
                 app.UseDeveloperExceptionPage();
             }
 

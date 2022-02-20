@@ -22,6 +22,11 @@ namespace WebApi.Services
         {
             var product = await _productRepository.GetByIdAsync(id);
 
+            if(product is null)
+            {
+                throw new ApplicationException($"Product with {id} not found");
+            }
+
             return product.AsDto();
         }
 

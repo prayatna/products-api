@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Dto;
 using WebApi.Services;
@@ -37,27 +38,31 @@ namespace WebApi.Controllers
 
         // GET /products/{id}
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ProductDto>> GetProductAsync(Guid id)
         {
-            //TODO check what isNew is
-            //var product = new Product(id);
-            //if (product.IsNew)
-            //    throw new Exception();
-
-            //return product;
-
-            var product = await _productService.GetProductById(id);
-            if (product is null)
+            try
             {
-                return NoContent();
+                var product = await _productService.GetProductById(id);
+                
+                return product;
             }
-
-            // Handle exception?
-            return product;
+            catch(ApplicationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+           
         }
 
         // POST /products
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ProductDto>> PostProductAsync(AddUpdateProductDto product)
         {
             try
@@ -76,6 +81,8 @@ namespace WebApi.Controllers
 
         // PUT /products/{id}
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdateAsync(Guid id, AddUpdateProductDto product)
         {
             try
@@ -95,6 +102,8 @@ namespace WebApi.Controllers
 
         // DELETE /products/{id}
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> Delete(Guid id)
         {
             try
@@ -119,6 +128,7 @@ namespace WebApi.Controllers
 
         // GET /products/{productId}/options
         [HttpGet("{productId}/options")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ProductOptionsDto>> GetAllOptionsAsync(Guid productId)
         {
             try
@@ -136,6 +146,8 @@ namespace WebApi.Controllers
 
         // GET /products/{productId}/options/{id}
         [HttpGet("{productId}/options/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ProductOptionDto>> GetOptionAsync(Guid productId, Guid id)
         {
             try
@@ -155,6 +167,8 @@ namespace WebApi.Controllers
 
         // POST /products/{productId}/options
         [HttpPost("{productId}/options")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<ProductOptionDto>> CreateOptionAsync(Guid productId,
             AddUpdateProductOptionDto productOption)
         {
@@ -179,6 +193,8 @@ namespace WebApi.Controllers
 
         // PUT /products/{productId}/options/{id}
         [HttpPut("{productId}/options/{id}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdateOptionAsync(Guid id, AddUpdateProductOptionDto option)
         {
             try
@@ -200,6 +216,8 @@ namespace WebApi.Controllers
         }
 
         [HttpDelete("{productId}/options/{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> DeleteOption(Guid id)
         {
             try
