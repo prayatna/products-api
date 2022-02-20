@@ -1,13 +1,32 @@
-# refactor-this
-The attached project is a poorly written products API in C#.
+# ProductAPI
 
-Please evaluate and refactor areas where you think can be improved. 
+Public API to perform basic CRUD operations for Products and its options.
 
-Consider all aspects of good software engineering and show us how you'll make it #beautiful and make it a production ready code.
+ProductApi target framework has been upgraded to .NET 5. Open solution and build through Visual Studio, the launch url points to Swagger UI which lists all the endpoints in more detail.
 
-## Getting started for applicants
+## Folder Structure
 
-There should be these endpoints:
+```
+.
+├── Data
+│   ├── Migrations  # auto generated migrations
+│   ├── Repositories
+├── Domain
+│   ├── Entity # model that matches the database table
+│   ├── Interfaces # interfaces to repositories
+├── WebApi
+│   ├── App_Data
+│   ├── Controllers
+│   ├── Dto # data transfer objects to API request/response
+│   ├── Helpers
+│   ├── Services # service that connects Data layer to API
+├── WebApi.Tests # unit tests
+
+```
+
+## Current Endpoints
+
+There are following endpoints in use:
 
 1. `GET /products` - gets all products.
 2. `GET /products?name={name}` - finds all products matching the specified name.
@@ -21,9 +40,10 @@ There should be these endpoints:
 10. `PUT /products/{id}/options/{optionId}` - updates the specified product option.
 11. `DELETE /products/{id}/options/{optionId}` - deletes the specified product option.
 
-All models are specified in the `/Models` folder, but should conform to:
+All data transfer objects are specified in the `WebApi/Dto` folder, and conform to:
 
 **Product:**
+
 ```
 {
   "Id": "01234567-89ab-cdef-0123-456789abcdef",
@@ -34,7 +54,8 @@ All models are specified in the `/Models` folder, but should conform to:
 }
 ```
 
-**Products:**
+**List of Products:**
+
 ```
 {
   "Items": [
@@ -49,6 +70,7 @@ All models are specified in the `/Models` folder, but should conform to:
 ```
 
 **Product Option:**
+
 ```
 {
   "Id": "01234567-89ab-cdef-0123-456789abcdef",
@@ -57,7 +79,8 @@ All models are specified in the `/Models` folder, but should conform to:
 }
 ```
 
-**Product Options:**
+**List of Product Options:**
+
 ```
 {
   "Items": [
@@ -70,3 +93,7 @@ All models are specified in the `/Models` folder, but should conform to:
   ]
 }
 ```
+
+More detailed data structure can be viewed from the Swagger UI.
+
+The project has been divided into Api - Domain - Data Layer. Data layer consists of repository that can access the database, and the migrations used to create tables. Domain layer is not dependent to any other layer. This layer holds the key entity models, and the interface (action required to perform business logic) that is required for the application. Api Layer consists of all the endpoints, and services that connects the Data layer to the application.
