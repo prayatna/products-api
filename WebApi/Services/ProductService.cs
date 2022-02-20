@@ -39,7 +39,7 @@ namespace WebApi.Services
         public async Task<ProductDto> AddProduct(AddUpdateProductDto product)
         {
 
-            var productEntity = new Productx(product.Name, product.Description,
+            var productEntity = new Product(product.Name, product.Description,
                 product.Price, product.DeliveryPrice);
 
             await _productRepository.AddAsync(productEntity);
@@ -104,7 +104,7 @@ namespace WebApi.Services
                 throw new ApplicationException("Cannot have production option without a product");
             }
 
-            var newProductOption = new ProductOptionx(productOptionDto.Name, productOptionDto.Description, product);
+            var newProductOption = new ProductOption(productOptionDto.Name, productOptionDto.Description, product);
 
             await _productRepository.AddProductOption(newProductOption);
 

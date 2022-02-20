@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Dto;
-using WebApi.Models;
 using WebApi.Services;
 
 namespace WebApi.Controllers

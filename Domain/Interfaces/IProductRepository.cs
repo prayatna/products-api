@@ -5,14 +5,14 @@ using Domain.Entity;
 
 namespace Domain.Interfaces
 {
-    public interface IProductRepository : IRepository<Productx>
+    public interface IProductRepository : IRepository<Product>
     {
         // Product Options
-        Task<IEnumerable<ProductOptionx>> GetAllOptionsForProduct(Guid productId);
+        Task<IEnumerable<ProductOption>> GetAllOptionsForProduct(Guid productId);
 
-        Task<ProductOptionx> GetOptionForProduct(Guid productId, Guid productOptionId);
+        Task<ProductOption> GetOptionForProduct(Guid productId, Guid productOptionId);
 
-        Task AddProductOption(ProductOptionx productOption);
+        Task AddProductOption(ProductOption productOption);
 
         Task UpdateProductOption(Guid productOptionId, string name, string description);
 
