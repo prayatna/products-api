@@ -87,7 +87,7 @@ namespace WebApi.Services
                 throw new ApplicationException($"No product found for productId: {productId}");
             }
 
-            await _productRepository.DeleteAsync(existingProduct); // TODO: cascade delete product options
+            await _productRepository.DeleteAsync(existingProduct);
         }
 
         #endregion
@@ -117,7 +117,7 @@ namespace WebApi.Services
 
             if(product is null)
             {
-                throw new ApplicationException("Cannot have production option without a product");
+                throw new ApplicationException("Cannot have product option without a product");
             }
 
             var newProductOption = new ProductOption(productOptionDto.Name, productOptionDto.Description, product);
